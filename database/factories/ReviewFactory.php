@@ -9,27 +9,25 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ReviewFactory extends Factory
 {
-    /**q
+    /**
      * Define the model's default state.
      *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
-
-        $createdAt = fake()->dateTimeBetween('-2 years');
-        $updatedAt = fake()->dateTimeBetween($createdAt, 'now');
-
-
         return [
-            'title' => fake()->sentence(3),
-            'author' => fake()->name,
-            'created_at' => $createdAt,
-            'updated_at' => $updatedAt
+            'book_id' => null,
+            'review' => fake()->paragraph,
+            'rating' => fake()->numberBetween(1, 5),
+            'created_at' => fake()->dateTimeBetween('-2 years'),
+            'updated_at' => function (array $attributes) {
+                return fake()->dateTimeBetween($attributes['created_at'], 'now');
+            },
         ];
     }
 
-    public function good() 
+    public function good()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -38,7 +36,7 @@ class ReviewFactory extends Factory
         });
     }
 
-    public function average() 
+    public function average()
     {
         return $this->state(function (array $attributes) {
             return [
@@ -47,7 +45,7 @@ class ReviewFactory extends Factory
         });
     }
 
-    public function bad() 
+    public function bad()
     {
         return $this->state(function (array $attributes) {
             return [
