@@ -22,14 +22,16 @@ class BookController extends Controller
             $query->title($title)
         );
 
-        $books = match($filter) {
+        $books = match ($filter) {
             'popular_last_month' => $books->popularLastMonth(),
             'popular_last_6month' => $books->popularLast6Month(),
             'highest_rated_last_month' => $books->highestRatedLastMonth(),
             'highest_rated_last_6month' => $books->highestRatedLast6Month(),
             default => $books->latest()
         };
-        $books = $books->get();
+
+        $cacheKey = 'books.' . $filter . '.' . $title;      
+        $books = cache()->remember($cacheKey, 3600, fn() => $books->get());
 
         //return view('books.index', compact('books'));
         return view('books.index', ['books' => $books]);
